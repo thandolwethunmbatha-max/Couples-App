@@ -57,9 +57,13 @@ export default async function DashboardPage() {
             </div>
           </MobileCard>
           <MobileCard>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-rose-400">Streak glow</p>
+            <div className="mt-3 flex items-end gap-2"><span className="text-5xl">🔥</span><div><p className="text-3xl font-black text-plum">3 days</p><p className="text-sm text-slate-600">Keep the connection ritual warm with one prompt tonight.</p></div></div>
+          </MobileCard>
+          <MobileCard>
             <h2 className="text-xl font-black text-plum">Tonight's shortcut</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">Start with the question jar and save your favorite answer to the memory lane timeline.</p>
-            <ButtonLink href="/games/question-jar" className="mt-5 w-full">Draw a question</ButtonLink>
+            <div className="mt-5 grid gap-3"><ButtonLink href="/games/question-jar" className="w-full">Draw a question</ButtonLink><ButtonLink href="/settings" variant="secondary" className="w-full">Notification settings</ButtonLink></div>
           </MobileCard>
         </aside>
       </section>
