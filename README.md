@@ -31,9 +31,10 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 4. Use Node.js 20.9 or newer.
 5. In Supabase SQL editor, run `supabase/schema.sql`.
 6. In Supabase SQL editor, run `supabase/seed_questions.sql` to insert 100 original prompts.
-7. Install dependencies when registry access is available: `npm install`.
-8. Run the app locally: `npm run dev`.
-9. In Supabase Auth settings, add these redirect URLs:
+7. For deployed projects that were created from the initial schema, run `supabase/migrations/20260513000000_couple_pairing_rpc.sql` to add the invite-code join RPC and two-person membership guard.
+8. Install dependencies when registry access is available: `npm install`.
+9. Run the app locally: `npm run dev`.
+10. In Supabase Auth settings, add these redirect URLs:
    - `http://localhost:3000/auth/callback`
    - `https://your-vercel-domain.vercel.app/auth/callback`
 
@@ -47,9 +48,14 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 - `/games` protected game catalog.
 - `/games/[slug]` protected game-flow shell.
 
+## Current functional flows
+
+- Onboarding checks whether the signed-in user belongs to a couple, then offers couple creation or invite-code joining.
+- Dashboard shows the couple name, invite code, membership status, and a share-ready invite section.
+- Question Jar persists a random question session, saves each partner answer, polls while waiting, and reveals both answers after both partners respond.
+- Memory Lane, Date Spark, and Love Awards persist shared couple records in Supabase and reload from the database after refresh.
+
 ## Next build steps
 
-- Wire couple creation and invitation code joining to `couples` and `couple_members`.
-- Persist game sessions in `game_sessions`, `answers`, `memories`, `date_ideas`, and `awards`.
-- Add realtime partner reveal flows with Supabase channels.
+- Upgrade Question Jar polling to Supabase realtime channels if lower-latency partner reveal is required.
 - Add offline caching service worker behavior if full offline PWA functionality is required.

@@ -1,8 +1,10 @@
 import { GameCard } from '@/components/game-card';
 import { AppLogo } from '@/components/shell';
 import { games } from '@/lib/games/catalog';
+import { requireCouple } from '@/lib/couples';
 
-export default function GamesPage() {
+export default async function GamesPage() {
+  await requireCouple();
   return (
     <main className="min-h-screen bg-romantic-radial px-5 py-5">
       <div className="mx-auto max-w-6xl"><AppLogo /></div>
