@@ -3,18 +3,22 @@ import { Button, ButtonLink } from '@/components/button';
 import { CopyButton } from '@/components/copy-button';
 import { AppLogo, MobileCard } from '@/components/shell';
 import { getCoupleContext } from '@/lib/couples';
+import { friendlySupabaseMessage } from '@/lib/errors';
+import { ensureProfile } from '@/lib/profiles';
 import { createClient } from '@/lib/supabase/server';
 
 async function createCouple(formData: FormData) {
   'use server';
 
+  let user;
+
+  try {
+    user = await ensureProfile();
+  } catch (error) {
+    redirect(`/onboarding?error=${encodeURIComponent(error instanceof Error ? error.message : 'Please sign in again before continuing.')}`);
+  }
+
   const supabase = await createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect('/auth/login');
-
   const name = String(formData.get('name') || 'Our Story').trim() || 'Our Story';
   const { data, error } = await supabase
     .from('couples')
@@ -22,7 +26,7 @@ async function createCouple(formData: FormData) {
     .select('id')
     .single();
 
-  if (error || !data) redirect(`/onboarding?error=${encodeURIComponent(error?.message ?? 'We could not create your couple yet.')}`);
+  if (error || !data) redirect(`/onboarding?error=${encodeURIComponent(friendlySupabaseMessage(error?.message, 'We could not create your couple yet. Please refresh and try again.'))}`);
   redirect('/onboarding?created=1');
 }
 
@@ -32,10 +36,16 @@ async function joinCouple(formData: FormData) {
   const inviteCode = String(formData.get('invite_code') || '').trim().toUpperCase();
   if (!inviteCode) redirect('/onboarding?error=Enter an invite code to join your partner.');
 
+  try {
+    await ensureProfile();
+  } catch (error) {
+    redirect(`/onboarding?error=${encodeURIComponent(error instanceof Error ? error.message : 'Please sign in again before continuing.')}`);
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.rpc('join_couple_by_invite_code', { raw_invite_code: inviteCode });
 
-  if (error) redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/onboarding?error=${encodeURIComponent(friendlySupabaseMessage(error.message, 'We could not join that couple. Check the invite code and try again.'))}`);
   redirect('/dashboard');
 }
 

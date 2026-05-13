@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
+import { ensureProfile } from '@/lib/profiles';
 import { createClient } from '@/lib/supabase/server';
 
 export type CoupleMember = {
@@ -25,13 +26,15 @@ export type CoupleContext = {
 };
 
 export const getCoupleContext = cache(async (): Promise<CoupleContext> => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
+  let user;
 
-  if (userError || !user) redirect('/auth/login');
+  try {
+    user = await ensureProfile();
+  } catch {
+    redirect('/auth/login');
+  }
+
+  const supabase = await createClient();
 
   const { data: memberships, error: membershipError } = await supabase
     .from('couple_members')

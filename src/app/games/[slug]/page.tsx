@@ -5,6 +5,8 @@ import { Button, ButtonLink } from '@/components/button';
 import { WaitingRefresh } from '@/components/games/waiting-refresh';
 import { AppLogo, MobileCard } from '@/components/shell';
 import { requireCouple } from '@/lib/couples';
+import { friendlySupabaseMessage } from '@/lib/errors';
+import { ensureProfile } from '@/lib/profiles';
 import { getGame, games } from '@/lib/games/catalog';
 import { createClient } from '@/lib/supabase/server';
 
@@ -25,9 +27,19 @@ type Award = { id: string; recipient_id: string; title: string; note: string; cr
 
 export const dynamic = 'force-dynamic';
 
+
+async function ensureGameProfile(slug: string) {
+  try {
+    await ensureProfile();
+  } catch (error) {
+    redirect(`/games/${slug}?error=${encodeURIComponent(error instanceof Error ? error.message : 'Please sign in again before continuing.')}`);
+  }
+}
+
 async function startQuestionJar() {
   'use server';
 
+  await ensureGameProfile('question-jar');
   const { user, couple } = await requireCouple();
   const supabase = await createClient();
   const { data: questions, error: questionError } = await supabase
@@ -35,7 +47,7 @@ async function startQuestionJar() {
     .select('id')
     .eq('is_active', true);
 
-  if (questionError || !questions?.length) redirect(`/games/question-jar?error=${encodeURIComponent(questionError?.message ?? 'No questions are available yet.')}`);
+  if (questionError || !questions?.length) redirect(`/games/question-jar?error=${encodeURIComponent(friendlySupabaseMessage(questionError?.message, 'No questions are available yet.'))}`);
 
   const question = questions[Math.floor(Math.random() * questions.length)];
   const { data: session, error: sessionError } = await supabase
@@ -51,13 +63,14 @@ async function startQuestionJar() {
     .select('id')
     .single();
 
-  if (sessionError || !session) redirect(`/games/question-jar?error=${encodeURIComponent(sessionError?.message ?? 'Could not start Question Jar.')}`);
+  if (sessionError || !session) redirect(`/games/question-jar?error=${encodeURIComponent(friendlySupabaseMessage(sessionError?.message, 'Could not start Question Jar. Please try again.'))}`);
   redirect(`/games/question-jar?session=${session.id}`);
 }
 
 async function saveQuestionAnswer(formData: FormData) {
   'use server';
 
+  await ensureGameProfile('question-jar');
   const { user } = await requireCouple();
   const supabase = await createClient();
   const sessionId = String(formData.get('session_id'));
@@ -70,7 +83,7 @@ async function saveQuestionAnswer(formData: FormData) {
     .from('answers')
     .upsert({ session_id: sessionId, question_id: questionId, user_id: user.id, body }, { onConflict: 'session_id,user_id' });
 
-  if (error) redirect(`/games/question-jar?session=${sessionId}&error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/games/question-jar?session=${sessionId}&error=${encodeURIComponent(friendlySupabaseMessage(error.message, 'We could not save your answer. Please try again.'))}`);
 
   const { count } = await supabase
     .from('answers')
@@ -87,6 +100,7 @@ async function saveQuestionAnswer(formData: FormData) {
 async function addMemory(formData: FormData) {
   'use server';
 
+  await ensureGameProfile('memory-lane');
   const { user, couple } = await requireCouple();
   const supabase = await createClient();
   const title = String(formData.get('title') || '').trim();
@@ -105,13 +119,14 @@ async function addMemory(formData: FormData) {
     created_by: user.id
   });
 
-  if (error) redirect(`/games/memory-lane?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/games/memory-lane?error=${encodeURIComponent(friendlySupabaseMessage(error.message, 'We could not save that memory. Please try again.'))}`);
   redirect('/games/memory-lane');
 }
 
 async function addDateIdea(formData: FormData) {
   'use server';
 
+  await ensureGameProfile('date-spark');
   const { user, couple } = await requireCouple();
   const supabase = await createClient();
   const title = String(formData.get('title') || '').trim();
@@ -132,13 +147,14 @@ async function addDateIdea(formData: FormData) {
     created_by: user.id
   });
 
-  if (error) redirect(`/games/date-spark?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/games/date-spark?error=${encodeURIComponent(friendlySupabaseMessage(error.message, 'We could not save that date idea. Please try again.'))}`);
   redirect('/games/date-spark');
 }
 
 async function addAward(formData: FormData) {
   'use server';
 
+  await ensureGameProfile('love-awards');
   const { user, couple, partner } = await requireCouple();
   if (!partner) redirect('/games/love-awards?error=Invite your partner before sending an award.');
 
@@ -156,7 +172,7 @@ async function addAward(formData: FormData) {
     created_by: user.id
   });
 
-  if (error) redirect(`/games/love-awards?error=${encodeURIComponent(error.message)}`);
+  if (error) redirect(`/games/love-awards?error=${encodeURIComponent(friendlySupabaseMessage(error.message, 'We could not send that award. Please try again.'))}`);
   redirect('/games/love-awards');
 }
 

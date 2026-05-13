@@ -32,9 +32,10 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 5. In Supabase SQL editor, run `supabase/schema.sql`.
 6. In Supabase SQL editor, run `supabase/seed_questions.sql` to insert 100 original prompts.
 7. For deployed projects that were created from the initial schema, run `supabase/migrations/20260513000000_couple_pairing_rpc.sql` to add the invite-code join RPC and two-person membership guard.
-8. Install dependencies when registry access is available: `npm install`.
-9. Run the app locally: `npm run dev`.
-10. In Supabase Auth settings, add these redirect URLs:
+8. Run `supabase/migrations/20260513010000_rls_stability_pass.sql` to refresh profile triggers, helper functions, and RLS policies used by onboarding and games.
+9. Install dependencies when registry access is available: `npm install`.
+10. Run the app locally: `npm run dev`.
+11. In Supabase Auth settings, add these redirect URLs:
    - `http://localhost:3000/auth/callback`
    - `https://your-vercel-domain.vercel.app/auth/callback`
 
@@ -44,13 +45,14 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 - `/auth/signup` account creation.
 - `/auth/login` sign in.
 - `/auth/callback` Supabase email and PKCE callback handler.
+- `/onboarding` protected couple creation and invite-code join flow.
 - `/dashboard` protected relationship dashboard.
 - `/games` protected game catalog.
 - `/games/[slug]` protected game-flow shell.
 
 ## Current functional flows
 
-- Onboarding checks whether the signed-in user belongs to a couple, then offers couple creation or invite-code joining.
+- Onboarding ensures each signed-in user has a profile, checks whether they belong to a couple, then offers couple creation or invite-code joining.
 - Dashboard shows the couple name, invite code, membership status, and a share-ready invite section.
 - Question Jar persists a random question session, saves each partner answer, polls while waiting, and reveals both answers after both partners respond.
 - Memory Lane, Date Spark, and Love Awards persist shared couple records in Supabase and reload from the database after refresh.
