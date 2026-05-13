@@ -6,6 +6,7 @@ OurStory is a mobile-first Next.js couples app for private relationship rituals,
 
 - **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS, reusable React components.
 - **Runtime:** Node.js 20.9+ to match the Next.js 16 runtime requirement.
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, reusable React components.
 - **Auth:** Supabase Auth with the current `@supabase/ssr` client pattern for browser, server, and middleware clients.
 - **Database:** Supabase Postgres with row-level security for profiles, couples, memberships, sessions, answers, memories, date ideas, and awards.
 - **PWA:** Web app manifest and maskable SVG icons are included in `public/`.
@@ -34,6 +35,11 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 7. Install dependencies when registry access is available: `npm install`.
 8. Run the app locally: `npm run dev`.
 9. In Supabase Auth settings, add these redirect URLs:
+4. In Supabase SQL editor, run `supabase/schema.sql`.
+5. In Supabase SQL editor, run `supabase/seed_questions.sql` to insert 100 original prompts.
+6. Install dependencies when registry access is available: `npm install`.
+7. Run the app locally: `npm run dev`.
+8. In Supabase Auth settings, add these redirect URLs:
    - `http://localhost:3000/auth/callback`
    - `https://your-vercel-domain.vercel.app/auth/callback`
 
