@@ -34,10 +34,11 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 7. For deployed projects that were created from the initial schema, run `supabase/migrations/20260513000000_couple_pairing_rpc.sql` to add the invite-code join RPC and two-person membership guard.
 8. Run `supabase/migrations/20260513010000_rls_stability_pass.sql` to refresh profile triggers, helper functions, and RLS policies used by onboarding and games.
 9. Run `supabase/migrations/20260513020000_push_and_themed_games.sql` to add push notification tables, themed game support, reactions, favorites, shared goals, and 240 new prompts.
-10. Add push environment variables for production: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `SUPABASE_SERVICE_ROLE_KEY`, and `CRON_SECRET`.
-11. Install dependencies when registry access is available: `npm install`.
-12. Run the app locally: `npm run dev`.
-13. In Supabase Auth settings, add these redirect URLs:
+10. Run `supabase/migrations/20260514000000_multiplayer_rounds_and_design.sql` to stabilize shared game rounds, per-question answers, reactions/favourites, and private design settings.
+11. Add push environment variables for production: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `SUPABASE_SERVICE_ROLE_KEY`, and `CRON_SECRET`.
+12. Install dependencies when registry access is available: `npm install`.
+13. Run the app locally: `npm run dev`.
+14. In Supabase Auth settings, add these redirect URLs:
    - `http://localhost:3000/auth/callback`
    - `https://your-vercel-domain.vercel.app/auth/callback`
 
@@ -50,6 +51,7 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 - `/onboarding` protected couple creation and invite-code join flow.
 - `/dashboard` protected relationship dashboard.
 - `/settings` protected push notification preferences and device subscription page.
+- `/design` protected design settings page for couple-level branding and theme customization.
 - `/games` protected game catalog.
 - `/games/[slug]` protected game-flow shell.
 
@@ -61,6 +63,8 @@ Next.js 16 uses Turbopack by default for `next dev` and `next build`, so the exi
 - Memory Lane, Date Spark, and Love Awards persist shared couple records in Supabase and reload from the database after refresh.
 - Intimacy Cards, Late Night Talks, Flirty Chaos, and Future Us add 240 themed prompts, reactions, favorites, memory saving, playful scoring, and shared vision goals.
 - Push notifications support daily reminders, partner-answer reveals, new memory/date idea nudges, and streak reminders through browser Push API subscriptions and Vercel cron.
+- Multiplayer prompt games use one shared active session per couple/game, one current question per round, client-side optimistic actions, realtime subscriptions, and safe polling fallback.
+- Design settings store couple branding in Supabase and apply app name, colors, gradient, radius, button style, dashboard heading, logo URL, and theme mode globally.
 
 ## Next build steps
 

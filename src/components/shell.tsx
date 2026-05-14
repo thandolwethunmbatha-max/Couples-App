@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import { ButtonLink } from '@/components/button';
+import { getCurrentDesignSettings } from '@/lib/design/settings';
 
-export function AppLogo() {
+export async function AppLogo() {
+  const design = await getCurrentDesignSettings();
+
   return (
     <Link className="flex items-center gap-2 text-lg font-black tracking-tight text-plum" href="/">
-      <span className="grid size-10 place-items-center rounded-2xl bg-rose-500 text-white shadow-glow">
-        <Heart className="size-5 fill-current" />
+      <span className="grid size-10 place-items-center overflow-hidden rounded-2xl bg-[var(--ourstory-primary,#f43f5e)] text-white shadow-glow">
+        {design.logo_url ? <img src={design.logo_url} alt="" className="size-full object-cover" /> : <Heart className="size-5 fill-current" />}
       </span>
-      OurStory
+      {design.app_display_name}
     </Link>
   );
 }
@@ -26,5 +29,5 @@ export function MarketingHeader() {
 }
 
 export function MobileCard({ children }: { children: React.ReactNode }) {
-  return <section className="rounded-[2rem] border border-white/70 bg-white/75 p-5 shadow-glow backdrop-blur md:p-7">{children}</section>;
+  return <section className="rounded-[var(--ourstory-card-radius,2rem)] border border-white/70 bg-white/75 p-5 shadow-glow backdrop-blur md:p-7">{children}</section>;
 }

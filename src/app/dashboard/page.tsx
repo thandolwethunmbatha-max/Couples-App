@@ -5,9 +5,11 @@ import { GameCard } from '@/components/game-card';
 import { AppLogo, MobileCard } from '@/components/shell';
 import { games } from '@/lib/games/catalog';
 import { requireCouple } from '@/lib/couples';
+import { getCurrentDesignSettings } from '@/lib/design/settings';
 
 export default async function DashboardPage() {
   const { user, couple, members, partner, membership } = await requireCouple();
+  const design = await getCurrentDesignSettings();
   const firstName = user.email?.split('@')[0] ?? 'lovebirds';
   const partnerJoined = Boolean(partner);
 
@@ -21,7 +23,7 @@ export default async function DashboardPage() {
         <div className="space-y-6">
           <MobileCard>
             <p className="text-sm font-bold uppercase tracking-[0.24em] text-rose-400">{couple.name}</p>
-            <h1 className="mt-3 text-4xl font-black text-plum">Hi, {firstName}. Ready to make tonight feel intentional?</h1>
+            <h1 className="mt-3 text-4xl font-black text-plum">Hi, {firstName}. {design.dashboard_heading}</h1>
             <p className="mt-3 max-w-2xl text-slate-600">Your shared space is live. Invite your partner, answer a prompt, choose a game, or save a new memory from any device.</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <Stat icon={MessageCircleHeart} label="Prompts" value="100" />
@@ -63,7 +65,7 @@ export default async function DashboardPage() {
           <MobileCard>
             <h2 className="text-xl font-black text-plum">Tonight's shortcut</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">Start with the question jar and save your favorite answer to the memory lane timeline.</p>
-            <div className="mt-5 grid gap-3"><ButtonLink href="/games/question-jar" className="w-full">Draw a question</ButtonLink><ButtonLink href="/settings" variant="secondary" className="w-full">Notification settings</ButtonLink></div>
+            <div className="mt-5 grid gap-3"><ButtonLink href="/games/question-jar" className="w-full">Draw a question</ButtonLink><ButtonLink href="/settings" variant="secondary" className="w-full">Notification settings</ButtonLink><ButtonLink href="/design" variant="secondary" className="w-full">Design settings</ButtonLink></div>
           </MobileCard>
         </aside>
       </section>

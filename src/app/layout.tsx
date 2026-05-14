@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { designStyle, getCurrentDesignSettings } from '@/lib/design/settings';
 
 
 export const metadata: Metadata = {
@@ -24,10 +25,12 @@ export const viewport: Viewport = {
   maximumScale: 1
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const design = await getCurrentDesignSettings();
+
   return (
     <html lang="en">
-      <body className="font-sans antialiased">{children}</body>
+      <body className={`font-sans antialiased theme-${design.theme_mode}`} style={designStyle(design)}>{children}</body>
     </html>
   );
 }
