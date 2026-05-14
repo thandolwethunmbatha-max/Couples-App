@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #fff8ea;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #fff8ea 0%, #fff1f5 44%, #f5efff 100%);
+  color: #2f172a;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body {
+  background: var(--ourstory-gradient, linear-gradient(135deg, #fff8ea 0%, #fff1f5 44%, #f5efff 100%));
+}
+
+.bg-romantic-radial {
+  background-image: var(--ourstory-gradient, radial-gradient(circle at top left, rgba(251, 113, 133, 0.26), transparent 34%), radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.18), transparent 36%));
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
+
+.theme-playful {
+  --tw-ring-color: var(--ourstory-secondary, #a855f7);
+}

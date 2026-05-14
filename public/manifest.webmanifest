@@ -1,0 +1,13 @@
+{
+  "name": "OurStory",
+  "short_name": "OurStory",
+  "description": "A private romantic couples app for games, memories, and date rituals.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#fff8ea",
+  "theme_color": "#f43f5e",
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
